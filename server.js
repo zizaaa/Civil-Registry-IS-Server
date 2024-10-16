@@ -4,6 +4,7 @@ import session from "express-session";
 import passport from "./config/passport.js";
 import * as dotenv from "dotenv";
 import authChecker from "./auth/authChecker.js"
+import userRoutes from "./routes/userRoutes.js"
 
 dotenv.config();
 
@@ -30,10 +31,12 @@ app.use(session({
     },
 }));
 
-app.use(authChecker);
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(authChecker);
+app.use('/api/cris', userRoutes);
 
 app.listen(8000,()=>{
     console.log('Server is running at port 8000');
