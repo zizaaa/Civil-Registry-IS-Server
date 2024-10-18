@@ -1,0 +1,99 @@
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+export function up (knex) {
+    return knex.schema.createTable('birthcertificate', (table)=>{
+        table.increments('id').primary();
+        table.string('province');
+        table.string('cityOrMunicipality');
+        table.string('one_first');
+        table.string('one_middle');
+        table.string('one_last');
+        table.string('two_sex');
+        table.string('three_day');
+        table.string('three_month');
+        table.string('three_year');
+        table.string('four_nameOf');
+        table.string('four_cityOrMunicipality');
+        table.string('four_province');
+        table.string('fiveA_typeOfBirth');
+        table.string('fiveB_IfMultiple');
+        table.string('fiveC_birthOrder');
+        table.string('fiveD_weight');
+        table.string('six_first');
+        table.string('six_middle');
+        table.string('six_last');
+        table.string('seven_citizenship');
+        table.string('eight_religion');
+        table.string('nineA_totalNumber');
+        table.string('nineB_numberOfChild');
+        table.string('nineC_numberOfChildDead');
+        table.string('ten_occupation');
+        table.string('eleven_ageAtTheTime');
+        table.string('twelve_house');
+        table.string('twelve_cityOrMunicipality');
+        table.string('twelve_province');
+        table.string('thirteen_first');
+        table.string('thirteen_middle');
+        table.string('thirteen_last');
+        table.string('fourteen_citizenship');
+        table.string('fifteen_religion');
+        table.string('sixteen_occupation');
+        table.string('seventeen_ageAtTheTime');
+        table.string('eighteen_DateAndPlaceOfMarriageOfParents');
+        table.string('nineteenA_attendant');
+        table.string('nineteenB_Signature');
+        table.string('nineteenB_nameInPrint');
+        table.string('nineteenB_titleAndPosition');
+        table.string('nineteenB_address');
+        table.string('nineteenB_date');
+        table.string('nineteenB_bornAliveAt');
+        table.string('twenty_Signature');
+        table.string('twenty_nameInPrint');
+        table.string('twenty_relationToChild');
+        table.string('twenty_address');
+        table.string('twenty_date');
+        table.string('twentyOne_Signature');
+        table.string('twentyOne_nameInPrint');
+        table.string('twentyOne_titleOrPosition');
+        table.string('twentyOne_date');
+        table.string('twentyTwo_Signature');
+        table.string('twentyTwo_nameInPrint');
+        table.string('twentyTwo_titleOrPosition');
+        table.string('twentyTwo_date');
+        table.string('remarksAnnotation');
+        table.string('populationReferenceNumber');
+        table.string('fourtyOne');
+        table.string('fourtyEight');
+        table.string('fourtyNine');
+        table.string('fifthy');
+        table.string('fiftySix');
+        table.string('sixtyOne');
+        table.string('sixtyTwo');
+        table.string('sixtyFour');
+        table.string('sixtyEight');
+        table.string('sixtyNine');
+        table.string('seventy');
+        table.string('seventyTwo');
+        table.string('seventyFour');
+        table.string('seventySix');
+        table.string('seventyNine');
+        table.string('eightyOne');
+        table.string('eightySix');
+        table.string('eightySeven');
+        table.string('eightyEight');
+        table.string('ninetyOne');
+        table.string('ninetyThree');
+        table.string('ninetyFour');
+        table.string('registryNumber');
+    })
+};
+
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+export function down(knex) {
+    return knex.schema.dropTable('birthcertificate');
+};

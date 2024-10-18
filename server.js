@@ -3,8 +3,10 @@ import cors from "cors";
 import session from "express-session";
 import passport from "./config/passport.js";
 import * as dotenv from "dotenv";
-import authChecker from "./auth/authChecker.js"
-import userRoutes from "./routes/userRoutes.js"
+
+import authChecker from "./auth/authChecker.js";
+import userRoutes from "./routes/userRoutes.js";
+import birthCertRoutes from "./routes/birthCertRoutes.js";
 
 dotenv.config();
 
@@ -16,6 +18,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/uploads', express.static('uploads'));
 
 // Configure session
 app.use(session({
@@ -37,6 +40,7 @@ app.use(passport.session());
 
 app.use(authChecker);
 app.use('/api/cris', userRoutes);
+app.use('/api/cris/birth-certificate', birthCertRoutes);
 
 app.listen(8000,()=>{
     console.log('Server is running at port 8000');
