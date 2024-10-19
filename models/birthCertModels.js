@@ -13,18 +13,34 @@ export const getRegistryNumber = async () => {
     return currentLength + 1; // Add 1 to represent the next entry
 };
 
-// Get paginated birth certificates
-export const getPaginatedBirthCertificates = async (page, limit) => {
+export const getPaginatedBirthCertificates = async (page, limit, search) => {
     const offset = (page - 1) * limit;
-    const result = await db('birthcertificate')
-        .select('*')
-        .limit(limit)
-        .offset(offset);
+    let query = db('birthcertificate').select('*').limit(limit).offset(offset);
+    console.log('searching...', search);
     
-    const total = await db('birthcertificate').count('id as count');
+    if (search) {
+        const searchTerms = search.split(' ').map(term => term.toLowerCase());
+        console.log('Search terms:', searchTerms);
+        
+        query = query.where(builder => {
+            searchTerms.forEach(term => {
+                builder.orWhere(function() {
+                    this.whereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
+                        .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`); // Use double quotes for case-sensitive column
+                });
+            });
+        });
+    }
+
+    console.log('Executing query:', query.toSQL().sql, query.toSQL().bindings); // Log the SQL query
+
+    const result = await query;
+    console.log('Query result:', result); // Log the result
+
+    const totalCount = await db('birthcertificate').count('id as count');
     return {
         data: result,
-        total: parseInt(total[0].count, 10),
+        total: parseInt(totalCount[0].count, 10),
     };
 };
 

@@ -113,17 +113,17 @@ export const handleGetRegistryNumber = async (req, res) => {
     }
 };
 
-// Controller to handle paginated request
+// Controller to handle paginated request with search
 export const handleGetPaginatedBirthCertificates = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;  // Get the page from query params
         const limit = parseInt(req.query.limit) || 10;  // Set a default limit if not provided
-        console.log('queryyyy....');
-        console.log(page)
-        console.log(limit)
-        const result = await getPaginatedBirthCertificates(page, limit);
+        
+        // Get search parameters from the query
+        const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
 
-        console.log(result)
+        const result = await getPaginatedBirthCertificates(page, limit, searchTerm);
+
         return res.status(200).json(result);
     } catch (error) {
         return res.status(500).json({ message: 'Error fetching paginated data.' });
