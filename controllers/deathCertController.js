@@ -1,13 +1,14 @@
-import { getPaginatedBirthCertificates, getRegistryNumber, getSingleBirthCertificate, insertData } from "../models/birthCertModels.js";
+import { getFormNumber, getPaginatedDeathCertificates, getSingleDeathCertificate, insertData } from "../models/deathCertModels.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
 
-// register birth certificate
-export const registerBirthCert = async (req, res) => {
+// register death certificate
+export const registerDeathCert = async (req, res) => {
+    console.log('Death Cert Registering...');
     try {
         // Extract file paths
-        const fileKeys = ['nineteenB_Signature', 'twenty_Signature', 'twentyOne_Signature', 'twentyTwo_Signature'];
+        const fileKeys = ['twentySignature', 'twentyReviewedSignature', 'twentyFiveSignature', 'twentySixSignature', 'twentySevenSignature'];
         const filePaths = fileKeys.reduce((acc, key) => {
             acc[key] = getFilePath(req.files, key);
             return acc;
@@ -16,35 +17,38 @@ export const registerBirthCert = async (req, res) => {
         // Create certData object using spread operator
         const certData = {
             ...req.body,
-            nineteenB_Signature: filePaths['nineteenB_Signature'],
-            twenty_Signature: filePaths['twenty_Signature'],
-            twentyOne_Signature: filePaths['twentyOne_Signature'],
-            twentyTwo_Signature: filePaths['twentyTwo_Signature']
+            twentySignature: filePaths['twentySignature'],
+            twentyReviewedSignature: filePaths['twentyReviewedSignature'],
+            twentyFiveSignature: filePaths['twentyFiveSignature'],
+            twentySixSignature: filePaths['twentySixSignature'],
+            twentySevenSignature: filePaths['twentySevenSignature']
         };
 
         await insertData(certData);
+        console.log(certData)
         return res.status(201).json({ message: "Successfully registered!" });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Error registering birth certificate.' });
+        return res.status(500).json({ message: 'Error registering death certificate.' });
     }
 };
 
-export const handleGetRegistryNumber = async (req, res) => {
+
+export const handleGetFormNumber = async (req, res) => {
     try {
-        console.log('Handling registry number request...');
-        const registryNumber = await getRegistryNumber();
-        console.log('Registry number:', registryNumber);
+        console.log('Handling form number request...');
+        const formNumber = await getFormNumber();
+        console.log('Form number:', formNumber);
     
-        return res.status(200).json({ registryNumber });
+        return res.status(200).json({ formNumber });
     } catch (error) {
-        console.error('Error in handleGetRegistryNumber:', error);
-        return res.status(500).json({ message: 'Error retrieving birth certificate.' });
+        console.error('Error in handleGetFormNumber:', error);
+        return res.status(500).json({ message: 'Error retrieving death certificate.' });
     }
 };
 
 // Controller to handle paginated request with search
-export const handleGetPaginatedBirthCertificates = async (req, res) => {
+export const handleGetPaginatedDeathCertificates = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;  // Get the page from query params
         const limit = parseInt(req.query.limit) || 10;  // Set a default limit if not provided
@@ -52,7 +56,7 @@ export const handleGetPaginatedBirthCertificates = async (req, res) => {
         // Get search parameters from the query
         const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
 
-        const result = await getPaginatedBirthCertificates(page, limit, searchTerm);
+        const result = await getPaginatedDeathCertificates(page, limit, searchTerm);
 
         return res.status(200).json(result);
     } catch (error) {
@@ -67,10 +71,10 @@ export const handleGetSingleCertificate = async (req,res) => {
         return res.status(403).json({message:'Invalid ID'});
     }
     try {
-        const response = await getSingleBirthCertificate(id);
+        const response = await getSingleDeathCertificate(id);
 
             if(!response){
-                return res.status(404).json('Birth certificate not found.');
+                return res.status(404).json('Death certificate not found.');
             }
 
         return res.status(201).json(response);

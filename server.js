@@ -7,6 +7,7 @@ import * as dotenv from "dotenv";
 import authChecker from "./auth/authChecker.js";
 import userRoutes from "./routes/userRoutes.js";
 import birthCertRoutes from "./routes/birthCertRoutes.js";
+import deathCertRoutes from "./routes/deathCertRoutes.js";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use(passport.session());
 app.use(authChecker);
 app.use('/api/cris', userRoutes);
 app.use('/api/cris/birth-certificate', birthCertRoutes);
+app.use('/api/cris/death-certificate', deathCertRoutes);
 
 app.listen(8000,()=>{
     console.log('Server is running at port 8000');
