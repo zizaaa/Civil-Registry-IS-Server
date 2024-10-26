@@ -16,9 +16,9 @@ Follow these instructions to get a copy of this project up and running on your l
 ## Prerequisites
 Make sure you have the following installed:
 <ul>
-  <li>Node.js (v14 or higher)</li>
-  <li>PostgreSQL (v12 or higher)</li>
-  <li>Git (latest version)</li>
+  <li>Node.js (v14 or higher) - <a href="https://nodejs.org/en">Download Node.js</a></li>
+  <li>PostgreSQL (v12 or higher) - <a href="https://www.postgresql.org/download/">DownloadPostgreSQL</a></li>
+  <li>Git (latest version) - <a href="https://git-scm.com/downloads">Download Git</a></li>
 </ul>
 
 <br>
