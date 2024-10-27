@@ -1,6 +1,6 @@
 import db from '../config/db.js'
 
-// register death cert
+// register marriage cert
 export const insertData = ( data ) =>{
     return db('marriage_certificates').insert(data).returning('*');
 }
