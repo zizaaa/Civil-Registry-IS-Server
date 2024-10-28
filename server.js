@@ -11,6 +11,7 @@ import deathCertRoutes from "./routes/deathCertRoutes.js";
 import marriageCertRoutes from "./routes/marriageCertRoutes.js";
 import foundlingCertRoutes from "./routes/foundlingCertRoutes.js"
 import recentActRoutes from "./routes/recentActRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js"
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use('/api/cris/death-certificate', deathCertRoutes);
 app.use('/api/cris/marriage-certificate', marriageCertRoutes);
 app.use('/api/cris/foundling-certificate', foundlingCertRoutes);
 app.use('/api/cris/recent-activity', recentActRoutes);
+app.use('/api/cris/reports', reportRoutes);
 
 app.listen(8000,()=>{
     console.log('Server is running at port 8000');
