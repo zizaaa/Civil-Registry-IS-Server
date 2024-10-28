@@ -1,7 +1,7 @@
 import passport from "passport";
 import jwt from 'jsonwebtoken'
 import * as argon2 from "argon2";
-import { createUser, existingUser } from "../models/userModel.js";
+import { createUser, existingUser, updateUser } from "../models/userModel.js";
 
 async function existingUserChecker(username,email){
     const existing = await existingUser(username,email);
@@ -70,6 +70,22 @@ export async function registerUser(req,res){
     }
 }
 
+export async function currentUser(req,res){
+    try {
+        const user = req.user;
+        const userData ={
+            id:user.id,
+            username:user.username,
+            name:user.name,
+            email:user.email
+        }
+        return res.status(201).json(userData)
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({error:'Something went wrong!'});
+    }
+}
+
 export async function logout(req, res) {
     req.logout(err => {
         if (err) {
@@ -85,4 +101,48 @@ export async function logout(req, res) {
             return res.status(200).json({ message: 'Logged out successfully.' });
         });
     });
+}
+
+//update personal info
+export const updatePersonalInfo = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body;
+
+        // Ensure userId exists
+        if (!id) {
+            return res.status(400).json({ error: "User ID is required" });
+        }
+
+        const updatedUser = await updateUser(id, updates);
+        return res.status(201).json(updatedUser);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Error updating user information" });
+    }
+};
+
+//update password
+export const updatePassword = async(req,res)=>{
+    try {
+        const { id } = req.params;
+        const { password, oldPassword } = req.body;
+        const user = req.user;
+
+        if (await argon2.verify(user.password, oldPassword)) {
+            const hashedPass = await argon2.hash(password);
+            
+            const update = {
+                password:hashedPass
+            }
+    
+            const updatedUser = await updateUser(id, update);
+            return res.status(201).json(updatedUser);
+        } 
+
+        return res.status(403).json({ message: 'Incorrect password.' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Error updating password" });
+    }
 }
