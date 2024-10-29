@@ -1,53 +1,58 @@
 import passport from "passport";
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 import * as argon2 from "argon2";
-import { createUser, existingUser, updateUser } from "../models/userModel.js";
+import { createUser, existingUser, findById, loginUser, updateUser } from "../models/userModel.js";
 
-async function existingUserChecker(username,email){
-    const existing = await existingUser(username,email);
+async function existingUserChecker(username, email) {
+    const existing = await existingUser(username, email);
 
-    if(existing){
-        return `${existing.username === username ? 'Username already exist':'Email already exist'}`;
+    if (existing) {
+        return `${existing.username === username ? 'Username already exists' : 'Email already exists'}`;
     }
 
     return false;
 }
 
-export async function login(req,res,next){
-    passport.authenticate('local',(err, user, info) => {
-        if (err) return next(err);
+// Modify the login function
+export async function login(req, res, next) {
+    const { username, password } = req.body;
+    try {
+        const user = await loginUser(username); // Assuming loginUser fetches the user from the database
 
-        if (!user) return res.status(403).json({ message: info.message });
-
-        req.login(user, (err) => {
-            if (err) return next(err);
-
-            if(req.body.remember){
-                req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-            } else {
-                req.session.cookie.maxAge = 24 * 60 * 60 * 1000; // 1 day (default)
-            }
-
-            req.session.save((err) => {
-                if (err) return next(err);
-                console.log('Logged in successfully')
-                res.json({ message: 'Logged in successfully' });
+        // Verify the password
+        if (await argon2.verify(user.password, password)) {
+            // Generate JWT token
+            const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1d' });
+            console.log(user)
+            // Set the token in the cookie
+            res.cookie('token', token, {
+                httpOnly: true, // Helps prevent XSS attacks
+                secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+                maxAge: 24 * 60 * 60 * 1000 // 1 day
             });
-        })
-    })(req, res, next);
+
+            console.log('Logged in successfully');
+            return res.status(200).json({ message: 'Logged in successfully', user: { id: user.id, username: user.username }, token });
+        } else {
+            return res.status(403).json({ message: 'Incorrect password.' });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Cannot log in user.' });
+    }
 }
 
-export async function registerUser(req,res){
-    const { username, name, email, password} = req.body;
+export async function registerUser(req, res) {
+    const { username, name, email, password } = req.body;
 
-    if(!username || !name || !email || !passport){
-        return res.status(404).json({message:"Please complete all the information needed!"})
+    if (!username || !name || !email || !password) {
+        return res.status(404).json({ message: "Please complete all the information needed!" });
     }
 
-    const userExist = await existingUserChecker(username,email);
+    const userExist = await existingUserChecker(username, email);
 
-    if(userExist){
-        res.status(403).json({message:userExist})
+    if (userExist) {
+        res.status(403).json({ message: userExist });
         return;
     }
 
@@ -55,55 +60,54 @@ export async function registerUser(req,res){
         const hashedPass = await argon2.hash(password);
 
         const userData = {
-            username, 
-            name, 
-            email, 
-            password:hashedPass
-        }
+            username,
+            name,
+            email,
+            password: hashedPass
+        };
 
         await createUser(userData);
 
-        return res.status(201).json({message:'Success'});
+        return res.status(201).json({ message: 'Success' });
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).json({ error: 'Error creating user' });
     }
 }
 
-export async function currentUser(req,res){
+export async function currentUser(req, res) {
     try {
         const user = req.user;
-        const userData ={
-            id:user.id,
-            username:user.username,
-            name:user.name,
-            email:user.email
-        }
-        return res.status(201).json(userData)
+
+        const existingUser = await findById(user.id);
+        const userData = {
+            id: existingUser.id,
+            username: existingUser.username,
+            name: existingUser.name,
+            email: existingUser.email
+        };
+        return res.status(200).json(userData); // Changed status to 200 for success
     } catch (error) {
         console.error(error);
-        return res.status(500).json({error:'Something went wrong!'});
+        return res.status(500).json({ error: 'Something went wrong!' });
     }
 }
 
 export async function logout(req, res) {
-    req.logout(err => {
-        if (err) {
-            return res.status(500).json({ message: "Log out failed." });
-        }
-        console.log("User logged out using req.logout()");
-        req.session.destroy(err => {
-            if (err) {
-                return res.status(500).json({ message: 'Could not remove session.' });
-            }
-            res.clearCookie('session-cookie', { path: '/' }); // Check the session cookie name
-            console.log('Session destroyed and cookie cleared');
-            return res.status(200).json({ message: 'Logged out successfully.' });
-        });
+    // Clear the JWT token cookie
+    res.clearCookie('token', {
+        httpOnly: true, // Make sure it's marked as HttpOnly
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        sameSite: 'Lax', // Adjust according to your needs
+        path: '/' // Specify the path if needed
     });
+
+    console.log('User logged out successfully and token cleared');
+    return res.status(200).json({ message: 'Logged out successfully.' });
 }
 
-//update personal info
+
+// Update personal info
 export const updatePersonalInfo = async (req, res) => {
     try {
         const { id } = req.params;
@@ -115,29 +119,28 @@ export const updatePersonalInfo = async (req, res) => {
         }
 
         const updatedUser = await updateUser(id, updates);
-        return res.status(201).json(updatedUser);
+        return res.status(200).json(updatedUser); // Changed status to 200 for success
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Error updating user information" });
     }
 };
 
-//update password
-export const updatePassword = async(req,res)=>{
+// Update password
+export const updatePassword = async (req, res) => {
     try {
-        const { id } = req.params;
+        const user = req.user; // Get the current user from the request
         const { password, oldPassword } = req.body;
-        const user = req.user;
 
         if (await argon2.verify(user.password, oldPassword)) {
             const hashedPass = await argon2.hash(password);
             
             const update = {
-                password:hashedPass
-            }
-    
-            const updatedUser = await updateUser(id, update);
-            return res.status(201).json(updatedUser);
+                password: hashedPass
+            };
+
+            const updatedUser = await updateUser(user.id, update); // Use user.id instead of req.params.id
+            return res.status(200).json(updatedUser); // Changed status to 200 for success
         } 
 
         return res.status(403).json({ message: 'Incorrect password.' });
@@ -145,4 +148,4 @@ export const updatePassword = async(req,res)=>{
         console.error(error);
         return res.status(500).json({ error: "Error updating password" });
     }
-}
+};

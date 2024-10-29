@@ -1,5 +1,9 @@
 import db from "../config/db.js"
 
+// find by id
+export const findById = (id) =>{
+    return db('users').where({id}).first();
+}
 // Create a new user
 export const createUser = (data) =>{
     return db('users').insert(data).returning('*');
@@ -8,6 +12,11 @@ export const createUser = (data) =>{
 //existing user
 export const existingUser = (username, email) => {
     return db('users').where({username}).orWhere({email}).first();
+}
+
+//login user
+export const loginUser = (username) => {
+    return db('users').where({username}).first();
 }
 
 // update user

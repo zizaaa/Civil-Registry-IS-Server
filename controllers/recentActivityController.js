@@ -1,4 +1,5 @@
 import { insertActivity, getAllActivity } from '../models/recentActivityModel.js';
+import { findById } from '../models/userModel.js';
 
 export async function createActivity (req,res){
     const { message } = req.body;
@@ -8,9 +9,11 @@ export async function createActivity (req,res){
     }
 
     try {
+        const user = await findById(req.user.id)
+        
         const data = {
             message,
-            issued_by:req.user.name
+            issued_by:user.name
         }
         await insertActivity(data);
 
