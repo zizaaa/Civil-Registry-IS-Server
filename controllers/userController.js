@@ -15,20 +15,21 @@ async function existingUserChecker(username, email) {
 
 // Modify the login function
 export async function login(req, res, next) {
-    const { username, password } = req.body;
+    const { username, password, remember } = req.body; // Extract the remember parameter
     try {
         const user = await loginUser(username); // Assuming loginUser fetches the user from the database
 
         // Verify the password
         if (await argon2.verify(user.password, password)) {
             // Generate JWT token
-            const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1d' });
-            console.log(user)
+            const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: remember ? '365d' : '1d' }); // Set expiration based on remember
+            console.log(user);
+            
             // Set the token in the cookie
             res.cookie('token', token, {
                 httpOnly: true, // Helps prevent XSS attacks
                 secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-                maxAge: 24 * 60 * 60 * 1000 // 1 day
+                maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 365 days or 1 day
             });
 
             console.log('Logged in successfully');
