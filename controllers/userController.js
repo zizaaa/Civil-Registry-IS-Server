@@ -100,8 +100,7 @@ export async function logout(req, res) {
     res.clearCookie('token', {
         httpOnly: true, // Make sure it's marked as HttpOnly
         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        sameSite: 'Lax', // Adjust according to your needs
-        path: '/' // Specify the path if needed
+        sameSite: 'None', // Adjust according to your needs
     });
 
     console.log('User logged out successfully and token cleared');
