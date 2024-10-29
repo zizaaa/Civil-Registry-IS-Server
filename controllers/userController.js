@@ -29,7 +29,8 @@ export async function login(req, res, next) {
             res.cookie('token', token, {
                 httpOnly: true, // Helps prevent XSS attacks
                 secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-                maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 365 days or 1 day
+                maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 365 days or 1 day
+                sameSite: 'None'
             });
 
             console.log('Logged in successfully');
