@@ -7,7 +7,7 @@ const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
 export const registerFoundlingCert = async (req, res) => {
     try {
         // Extract file paths
-        const fileKeys = ['twelveInformantSignature', 'twelveRegistrarSignature', 'thirteenSignature'];
+        const fileKeys = ['twelveInformantSignature', 'twelveRegistrarSignature', 'thirteenSignature', 'scannedFile'];
         const filePaths = fileKeys.reduce((acc, key) => {
             acc[key] = getFilePath(req.files, key);
             return acc;
@@ -19,25 +19,22 @@ export const registerFoundlingCert = async (req, res) => {
             twelveInformantSignature: filePaths['twelveInformantSignature'],
             twelveRegistrarSignature: filePaths['twelveRegistrarSignature'],
             thirteenSignature: filePaths['thirteenSignature'],
+            scannedFile: filePaths['scannedFile']
         };
 
         await insertData(certData);
         return res.status(201).json({ message: "Successfully registered!" });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error registering foundling certificate.' });
+        return res.status(500).json({ error: 'Error registering foundling certificate.' });
     }
 };
 
 export const handleFormRegistryNumber = async (req, res) => {
     try {
-        console.log('Handling registry number request...');
         const registryNumber = await getFormNumber();
-        console.log('Registry number:', registryNumber);
     
         return res.status(200).json({ registryNumber });
     } catch (error) {
-        console.error('Error in handleFormRegistryNumber:', error);
         return res.status(500).json({ message: 'Error retrieving foundling certificate.' });
     }
 };

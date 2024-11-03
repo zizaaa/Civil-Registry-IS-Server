@@ -16,12 +16,10 @@ export const getFormNumber = async () => {
 export const getPaginatedFoundlingCertificates = async (page, limit, search) => {
     const offset = (page - 1) * limit;
     let query = db('foundlings_certificate').select('*').limit(limit).offset(offset);
-    console.log('searching...', search);
 
     if (search) {
         // Split search by spaces and convert each term to lowercase
         const searchTerms = search.split(' ').map(term => term.trim().toLowerCase());
-        console.log('Search terms:', searchTerms);
 
         query = query.where(builder => {
             searchTerms.forEach(term => {
@@ -34,10 +32,7 @@ export const getPaginatedFoundlingCertificates = async (page, limit, search) => 
         });
     }
 
-    console.log('Executing query:', query.toSQL().sql, query.toSQL().bindings); // Log the SQL query
-
     const result = await query;
-    console.log('Query result:', result); // Log the result
 
     const totalCount = await db('foundlings_certificate').count('id as count');
     return {

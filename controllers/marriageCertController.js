@@ -5,10 +5,9 @@ const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
 
 // register marriage certificate
 export const registerMarriageCert = async (req, res) => {
-    console.log('Marriage Cert Registering...');
     try {
         // Extract file paths
-        const fileKeys = ['eighteenHusbandSignature', 'eighteenWifeSignature', 'nineTeenSignature', 'twentySignatureOne', 'twentySignatureTwo', 'twentySignatureThree', 'twentySignatureFour', 'twentyOneSignature', 'twentyTwoSignature'];
+        const fileKeys = ['eighteenHusbandSignature', 'eighteenWifeSignature', 'nineTeenSignature', 'twentySignatureOne', 'twentySignatureTwo', 'twentySignatureThree', 'twentySignatureFour', 'twentyOneSignature', 'twentyTwoSignature', 'scannedFile'];
         const filePaths = fileKeys.reduce((acc, key) => {
             acc[key] = getFilePath(req.files, key);
             return acc;
@@ -26,26 +25,23 @@ export const registerMarriageCert = async (req, res) => {
             twentySignatureFour: filePaths['twentySignatureFour'],
             twentyOneSignature: filePaths['twentyOneSignature'],
             twentyTwoSignature: filePaths['twentyTwoSignature'],
+            scannedFile: filePaths['scannedFile']
         };
 
         await insertData(certData);
         return res.status(201).json({ message: "Successfully registered!" });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error registering marriage certificate.' });
+        return res.status(500).json({ error: 'Error registering marriage certificate.' });
     }
 };
 
 
 export const handleGetFormNumber = async (req, res) => {
     try {
-        console.log('Handling form number request...');
         const formNumber = await getFormNumber();
-        console.log('Form number:', formNumber);
     
         return res.status(200).json({ formNumber });
     } catch (error) {
-        console.error('Error in handleGetFormNumber:', error);
         return res.status(500).json({ message: 'Error retrieving death certificate.' });
     }
 };

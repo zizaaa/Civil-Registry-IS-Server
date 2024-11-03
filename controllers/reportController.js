@@ -7,7 +7,6 @@ export const handleGetAllCount = async (req,res) =>{
 
         return res.status(201).json(data);
     } catch (error) {
-        console.error(error);
         return res.status(500).json({error:"Error fetching data"});
     }
 }

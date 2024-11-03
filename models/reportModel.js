@@ -15,7 +15,6 @@ export const getCertificateCounts = async () => {
             foundlingCertificate: parseInt(foundlingCertificateCount.count, 10),
         };
     } catch (error) {
-        console.error('Error fetching certificate counts:', error);
         throw new Error('Unable to fetch certificate counts');
     }
 };

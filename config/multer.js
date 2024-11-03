@@ -6,7 +6,7 @@ import fs from "fs";
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         // Extract the value of one_last from req.body
-        const folderName = req.body.one_last || 'unknown';
+        const folderName = req.body.one_last || req.body.one_name;
 
         // Create the full path for the folder inside the 'uploads' directory
         const dir = path.join('uploads', folderName);

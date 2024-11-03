@@ -15,6 +15,7 @@ router.post('/register', isAuthenticated, upload.fields([
     {name:'twentySignatureFour', maxCount: 1},
     {name:'twentyOneSignature', maxCount: 1},
     {name:'twentyTwoSignature', maxCount: 1},
+    {name:'scannedFile', maxCount: 1},
 ]), registerMarriageCert);
 
 router.get('/form-number', isAuthenticated, handleGetFormNumber);

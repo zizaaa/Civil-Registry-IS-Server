@@ -87,6 +87,7 @@ export function up (knex) {
         table.string('ninetyThree');
         table.string('ninetyFour');
         table.string('registryNumber');
+        table.string('scannedFile');
     })
 };
 

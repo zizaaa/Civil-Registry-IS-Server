@@ -12,6 +12,7 @@ router.post('/register', isAuthenticated, upload.fields([
     {name:'twentyFiveSignature', maxCount: 1},
     {name:'twentySixSignature', maxCount: 1},
     {name:'twentySevenSignature', maxCount: 1},
+    {name:'scannedFile', maxCount: 1},
 ]), registerDeathCert);
 
 router.get('/form-number', isAuthenticated, handleGetFormNumber);

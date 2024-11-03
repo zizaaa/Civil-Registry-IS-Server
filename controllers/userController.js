@@ -19,27 +19,27 @@ export async function login(req, res, next) {
     try {
         const user = await loginUser(username); // Assuming loginUser fetches the user from the database
 
+        if(!user){
+            return res.status(404).json({error:`User with this username ${username} does not exist.`})
+        }
         // Verify the password
         if (await argon2.verify(user.password, password)) {
             // Generate JWT token
             const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: remember ? '365d' : '1d' }); // Set expiration based on remember
-            console.log(user);
             
             // Set the token in the cookie
             res.cookie('token', token, {
                 httpOnly: true, // Helps prevent XSS attacks
                 secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
                 maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 365 days or 1 day
-                sameSite: 'None'
+                sameSite: process.env.NODE_ENV === 'production' ? 'None':'Lax'
             });
 
-            console.log('Logged in successfully');
             return res.status(200).json({ message: 'Logged in successfully', user: { id: user.id, username: user.username }, token });
         } else {
-            return res.status(403).json({ message: 'Incorrect password.' });
+            return res.status(403).json({ error: 'Incorrect password.' });
         }
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ error: 'Cannot log in user.' });
     }
 }
@@ -72,7 +72,6 @@ export async function registerUser(req, res) {
 
         return res.status(201).json({ message: 'Success' });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ error: 'Error creating user' });
     }
 }
@@ -90,7 +89,6 @@ export async function currentUser(req, res) {
         };
         return res.status(200).json(userData); // Changed status to 200 for success
     } catch (error) {
-        console.error(error);
         return res.status(500).json({ error: 'Something went wrong!' });
     }
 }
@@ -100,10 +98,9 @@ export async function logout(req, res) {
     res.clearCookie('token', {
         httpOnly: true, // Make sure it's marked as HttpOnly
         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        sameSite: 'None', // Adjust according to your needs
+        sameSite: process.env.NODE_ENV === 'production' ? 'None':'Lax'
     });
 
-    console.log('User logged out successfully and token cleared');
     return res.status(200).json({ message: 'Logged out successfully.' });
 }
 
@@ -122,7 +119,6 @@ export const updatePersonalInfo = async (req, res) => {
         const updatedUser = await updateUser(id, updates);
         return res.status(200).json(updatedUser); // Changed status to 200 for success
     } catch (error) {
-        console.error(error);
         return res.status(500).json({ error: "Error updating user information" });
     }
 };
@@ -146,7 +142,6 @@ export const updatePassword = async (req, res) => {
 
         return res.status(403).json({ message: 'Incorrect password.' });
     } catch (error) {
-        console.error(error);
         return res.status(500).json({ error: "Error updating password" });
     }
 };

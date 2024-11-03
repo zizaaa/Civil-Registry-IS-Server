@@ -37,7 +37,6 @@ export const updateUser = async (userId, updates) => {
 
         return { message: "User updated successfully" };
     } catch (error) {
-        console.error('Error updating user:', error);
         throw new Error('Unable to update user');
     }
 };

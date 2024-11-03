@@ -50,6 +50,9 @@ export function up(knex) {
         // Information fields related to 'thirteen'
         table.string('thirteen_certification');
         table.string('thirteen_printedName');
+
+        // file
+        table.string('scannedFile');
     });
 };
 

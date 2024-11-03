@@ -9,6 +9,7 @@ router.post('/register', isAuthenticated, upload.fields([
     {name:'twelveInformantSignature', maxCount: 1},
     {name:'twelveRegistrarSignature', maxCount: 1},
     {name:'thirteenSignature', maxCount: 1},
+    {name:'scannedFile', maxCount: 1},
 ]), registerFoundlingCert);
 
 router.get('/form-number', isAuthenticated, handleFormRegistryNumber);

@@ -7,7 +7,7 @@ const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
 export const registerBirthCert = async (req, res) => {
     try {
         // Extract file paths
-        const fileKeys = ['nineteenB_Signature', 'twenty_Signature', 'twentyOne_Signature', 'twentyTwo_Signature'];
+        const fileKeys = ['nineteenB_Signature', 'twenty_Signature', 'twentyOne_Signature', 'twentyTwo_Signature', 'scannedFile'];
         const filePaths = fileKeys.reduce((acc, key) => {
             acc[key] = getFilePath(req.files, key);
             return acc;
@@ -19,26 +19,23 @@ export const registerBirthCert = async (req, res) => {
             nineteenB_Signature: filePaths['nineteenB_Signature'],
             twenty_Signature: filePaths['twenty_Signature'],
             twentyOne_Signature: filePaths['twentyOne_Signature'],
-            twentyTwo_Signature: filePaths['twentyTwo_Signature']
+            twentyTwo_Signature: filePaths['twentyTwo_Signature'],
+            scannedFile: filePaths['scannedFile']
         };
 
         await insertData(certData);
         return res.status(201).json({ message: "Successfully registered!" });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error registering birth certificate.' });
+        return res.status(500).json({ error: 'Error registering birth certificate.' });
     }
 };
 
 export const handleGetRegistryNumber = async (req, res) => {
     try {
-        console.log('Handling registry number request...');
         const registryNumber = await getRegistryNumber();
-        console.log('Registry number:', registryNumber);
     
         return res.status(200).json({ registryNumber });
     } catch (error) {
-        console.error('Error in handleGetRegistryNumber:', error);
         return res.status(500).json({ message: 'Error retrieving birth certificate.' });
     }
 };

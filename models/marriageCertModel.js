@@ -16,12 +16,10 @@ export const getFormNumber = async () => {
 export const getPaginatedMarriageCertificates = async (page, limit, search) => {
     const offset = (page - 1) * limit;
     let query = db('marriage_certificates').select('*').limit(limit).offset(offset);
-    console.log('searching...', search);
-    
+
     if (search) {
         const searchTerms = search.split(' ').map(term => term.toLowerCase());
-        console.log('Search terms:', searchTerms);
-        
+
         query = query.where(builder => {
             searchTerms.forEach(term => {
                 builder.orWhere(function() {
@@ -33,10 +31,7 @@ export const getPaginatedMarriageCertificates = async (page, limit, search) => {
         });
     }
 
-    console.log('Executing query:', query.toSQL().sql, query.toSQL().bindings); // Log the SQL query
-
     const result = await query;
-    console.log('Query result:', result); // Log the result
 
     const totalCount = await db('marriage_certificates').count('id as count');
     return {

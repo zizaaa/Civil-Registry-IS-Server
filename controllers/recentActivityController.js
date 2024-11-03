@@ -19,7 +19,6 @@ export async function createActivity (req,res){
 
         return res.status(201).json({message:"success"})
     } catch (error) {
-        console.error(error);
         return res.status(500).json({error:"Error adding activity"})
     }
 }
@@ -31,7 +30,6 @@ export async function getActivity(req,res) {
 
         return res.status(201).json(recentAct)
     } catch (error) {
-        console.error(error);
         return res.status(500).json({error:"Error fetching activity"})
     }
 }

@@ -5,10 +5,9 @@ const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
 
 // register death certificate
 export const registerDeathCert = async (req, res) => {
-    console.log('Death Cert Registering...');
     try {
         // Extract file paths
-        const fileKeys = ['twentySignature', 'twentyReviewedSignature', 'twentyFiveSignature', 'twentySixSignature', 'twentySevenSignature'];
+        const fileKeys = ['twentySignature', 'twentyReviewedSignature', 'twentyFiveSignature', 'twentySixSignature', 'twentySevenSignature', 'scannedFile'];
         const filePaths = fileKeys.reduce((acc, key) => {
             acc[key] = getFilePath(req.files, key);
             return acc;
@@ -21,28 +20,24 @@ export const registerDeathCert = async (req, res) => {
             twentyReviewedSignature: filePaths['twentyReviewedSignature'],
             twentyFiveSignature: filePaths['twentyFiveSignature'],
             twentySixSignature: filePaths['twentySixSignature'],
-            twentySevenSignature: filePaths['twentySevenSignature']
+            twentySevenSignature: filePaths['twentySevenSignature'],
+            scannedFile: filePaths['scannedFile']
         };
 
         await insertData(certData);
-        console.log(certData)
         return res.status(201).json({ message: "Successfully registered!" });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error registering death certificate.' });
+        return res.status(500).json({ error: 'Error registering death certificate.' });
     }
 };
 
 
 export const handleGetFormNumber = async (req, res) => {
     try {
-        console.log('Handling form number request...');
         const formNumber = await getFormNumber();
-        console.log('Form number:', formNumber);
     
         return res.status(200).json({ formNumber });
     } catch (error) {
-        console.error('Error in handleGetFormNumber:', error);
         return res.status(500).json({ message: 'Error retrieving death certificate.' });
     }
 };

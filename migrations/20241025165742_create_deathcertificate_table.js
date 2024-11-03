@@ -88,6 +88,9 @@ export function up(knex) {
         table.string('twentyFiveSignature');
         table.string('twentySixSignature');
         table.string('twentySevenSignature');
+
+        // file
+        table.string('scannedFile');
     });
 };
 

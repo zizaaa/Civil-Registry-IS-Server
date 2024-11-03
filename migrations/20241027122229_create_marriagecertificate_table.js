@@ -147,6 +147,9 @@ export function up(knex) {
         table.string('twentySignatureFour');
         table.string('twentyOneSignature');
         table.string('twentyTwoSignature');
+
+        // file
+        table.string('scannedFile');
     })
 };
 
