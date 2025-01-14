@@ -1,4 +1,4 @@
-import { getPaginatedBirthCertificates, getRegistryNumber, getSingleBirthCertificate, insertData } from "../models/birthCertModels.js";
+import { getPaginatedBirthCertificates, getRegistryNumber, getSingleBirthCertificate, insertData, searchBirthCertQuery } from "../models/birthCertModels.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
@@ -56,6 +56,19 @@ export const handleGetPaginatedBirthCertificates = async (req, res) => {
         return res.status(500).json({ message: 'Error fetching paginated data.' });
     }
 };
+
+export const searchBirthCertificate = async(req,res) => {
+    try {
+        // Get search parameters from the query
+        const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
+
+        const result = await searchBirthCertQuery(searchTerm);
+
+        return res.status(200).json(result)
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
+    }
+}
 
 export const handleGetSingleCertificate = async (req,res) => {
     const { id } = req.query;

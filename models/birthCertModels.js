@@ -24,6 +24,7 @@ export const getPaginatedBirthCertificates = async (page, limit, search) => {
             searchTerms.forEach(term => {
                 builder.orWhere(function() {
                     this.whereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
+                        .orWhereRaw('LOWER(one_first) LIKE ?', `%${term}%`)
                         .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`); // Use double quotes for case-sensitive column
                 });
             });
@@ -38,6 +39,26 @@ export const getPaginatedBirthCertificates = async (page, limit, search) => {
         total: parseInt(totalCount[0].count, 10),
     };
 };
+
+export const searchBirthCertQuery = async (search) =>{
+    let query = db('birthcertificate').select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber');
+
+    const searchTerms = search.split(' ').map(term => term.toLowerCase());
+        
+        query = query.where(builder => {
+            searchTerms.forEach(term => {
+                builder.orWhere(function() {
+                    this.whereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
+                        .orWhereRaw('LOWER(one_first) LIKE ?', `%${term}%`)
+                        .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`); // Use double quotes for case-sensitive column
+                });
+            });
+        });
+
+    const result = await query;
+
+    return result
+}
 
 // get single certificate
 export const getSingleBirthCertificate = (id) => {
