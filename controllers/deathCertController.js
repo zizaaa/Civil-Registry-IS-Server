@@ -1,4 +1,4 @@
-import { getFormNumber, getPaginatedDeathCertificates, getSingleDeathCertificate, insertData } from "../models/deathCertModels.js";
+import { deleteSingleDeathCert, getFormNumber, getPaginatedDeathCertificates, getSingleDeathCertificate, insertData, searchDeathCertQuery } from "../models/deathCertModels.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
@@ -48,16 +48,26 @@ export const handleGetPaginatedDeathCertificates = async (req, res) => {
         const page = parseInt(req.query.page) || 1;  // Get the page from query params
         const limit = parseInt(req.query.limit) || 10;  // Set a default limit if not provided
         
-        // Get search parameters from the query
-        const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
-
-        const result = await getPaginatedDeathCertificates(page, limit, searchTerm);
+        const result = await getPaginatedDeathCertificates(page, limit);
 
         return res.status(200).json(result);
     } catch (error) {
         return res.status(500).json({ message: 'Error fetching paginated data.' });
     }
 };
+
+export const searchDeathCertificate = async(req,res) => {
+    try {
+        // Get search parameters from the query
+        const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
+
+        const result = await searchDeathCertQuery(searchTerm);
+
+        return res.status(200).json(result)
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
+    }
+}
 
 export const handleGetSingleCertificate = async (req,res) => {
     const { id } = req.query;
@@ -75,5 +85,17 @@ export const handleGetSingleCertificate = async (req,res) => {
         return res.status(201).json(response);
     } catch (error) {
         return res.status(500).json({ message: 'Error finding certificate.' });
+    }
+}
+
+export const handleDeleteSingleDeathCert = async(req,res)=>{
+    try {
+        const { id } = req.body;
+
+        await deleteSingleDeathCert(id);
+
+        return res.status(200).json({message:"Certificate successfully deleted"})
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
     }
 }

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import isAuthenticated from "../auth/isAuthenticated.js";
 import { upload } from "../config/multer.js";
-import { handleFormRegistryNumber, handleGetPaginatedFoundlingCertificates, handleGetSingleCertificate, registerFoundlingCert } from "../controllers/foundlingCertController.js";
+import { handleDeleteSingleFoundlingCert, handleFormRegistryNumber, handleGetPaginatedFoundlingCertificates, handleGetSingleCertificate, registerFoundlingCert, searchFoundlings } from "../controllers/foundlingCertController.js";
 
 const router = Router();
 
@@ -13,6 +13,10 @@ router.post('/register', isAuthenticated, upload.fields([
 ]), registerFoundlingCert);
 
 router.get('/form-number', isAuthenticated, handleFormRegistryNumber);
+
+router.get('/search', isAuthenticated, searchFoundlings);
+
+router.post('/delete', isAuthenticated, handleDeleteSingleFoundlingCert);
 
 router.get('/get-all', isAuthenticated, handleGetPaginatedFoundlingCertificates);
 

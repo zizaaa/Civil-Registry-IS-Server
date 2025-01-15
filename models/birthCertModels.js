@@ -13,24 +13,10 @@ export const getRegistryNumber = async () => {
     return currentLength + 1; // Add 1 to represent the next entry
 };
 
-export const getPaginatedBirthCertificates = async (page, limit, search) => {
+export const getPaginatedBirthCertificates = async (page, limit) => {
     const offset = (page - 1) * limit;
     let query = db('birthcertificate').select('*').limit(limit).offset(offset);
     
-    if (search) {
-        const searchTerms = search.split(' ').map(term => term.toLowerCase());
-        
-        query = query.where(builder => {
-            searchTerms.forEach(term => {
-                builder.orWhere(function() {
-                    this.whereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
-                        .orWhereRaw('LOWER(one_first) LIKE ?', `%${term}%`)
-                        .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`); // Use double quotes for case-sensitive column
-                });
-            });
-        });
-    }
-
     const result = await query;
 
     const totalCount = await db('birthcertificate').count('id as count');
@@ -41,7 +27,7 @@ export const getPaginatedBirthCertificates = async (page, limit, search) => {
 };
 
 export const searchBirthCertQuery = async (search) =>{
-    let query = db('birthcertificate').select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber');
+    let query = db('birthcertificate').select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber', 'scannedFile');
 
     const searchTerms = search.split(' ').map(term => term.toLowerCase());
         
@@ -63,4 +49,8 @@ export const searchBirthCertQuery = async (search) =>{
 // get single certificate
 export const getSingleBirthCertificate = (id) => {
     return db('birthcertificate').where({ id }).first();
+}
+
+export const deleteSingleBirthCert = (id) =>{
+    return db('birthcertificate').delete('*').where({id})
 }

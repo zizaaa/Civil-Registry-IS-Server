@@ -13,22 +13,9 @@ export const getFormNumber = async () => {
     return currentLength + 1; // Add 1 to represent the next entry
 };
 
-export const getPaginatedDeathCertificates = async (page, limit, search) => {
+export const getPaginatedDeathCertificates = async (page, limit) => {
     const offset = (page - 1) * limit;
     let query = db('death_certificates').select('*').limit(limit).offset(offset);
-
-    if (search) {
-        const searchTerms = search.split(' ').map(term => term.toLowerCase());
-
-        query = query.where(builder => {
-            searchTerms.forEach(term => {
-                builder.orWhere(function() {
-                    this.whereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
-                        .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`); // Use double quotes for case-sensitive column
-                });
-            });
-        });
-    }
 
     const result = await query;
 
@@ -39,7 +26,31 @@ export const getPaginatedDeathCertificates = async (page, limit, search) => {
     };
 };
 
+export const searchDeathCertQuery = async (search) =>{
+    let query = db('death_certificates').select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber', 'scannedFile')
+
+    const searchTerms = search.split(' ').map(term => term.toLowerCase());
+        
+        query = query.where(builder => {
+            searchTerms.forEach(term => {
+                builder.orWhere(function() {
+                    this.whereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
+                        .orWhereRaw('LOWER(one_first) LIKE ?', `%${term}%`)
+                        .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`); // Use double quotes for case-sensitive column
+                });
+            });
+        });
+
+    const result = await query;
+
+    return result
+}
+
 // get single certificate
 export const getSingleDeathCertificate = (id) => {
     return db('death_certificates').where({ id }).first();
+}
+
+export const deleteSingleDeathCert = (id) =>{
+    return db('death_certificates').delete('*').where({id})
 }

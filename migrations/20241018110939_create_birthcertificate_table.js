@@ -87,6 +87,15 @@ export function up (knex) {
         table.string('ninetyThree');
         table.string('ninetyFour');
         table.string('registryNumber');
+        table.string('remarksAnnotationTwo');
+        table.string('eight');
+        table.string('nine');
+        table.string('eleven');
+        table.string('thirteen');
+        table.string('fifteen');
+        table.string('sixteen');
+        table.string('seventeen');
+        table.string('nineteen');
         table.string('scannedFile');
     })
 };

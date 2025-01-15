@@ -17,20 +17,6 @@ export const getPaginatedMarriageCertificates = async (page, limit, search) => {
     const offset = (page - 1) * limit;
     let query = db('marriage_certificates').select('*').limit(limit).offset(offset);
 
-    if (search) {
-        const searchTerms = search.split(' ').map(term => term.toLowerCase());
-
-        query = query.where(builder => {
-            searchTerms.forEach(term => {
-                builder.orWhere(function() {
-                    this.whereRaw('LOWER(one_last_wife) LIKE ?', [`%${term.toLowerCase()}%`])
-                        .orWhereRaw('LOWER(one_last) LIKE ?', [`%${term.toLowerCase()}%`])
-                        .orWhereRaw('LOWER("RegistryNumber") LIKE ?', [`%${term.toLowerCase()}%`]);
-                });
-            });
-        });
-    }
-
     const result = await query;
 
     const totalCount = await db('marriage_certificates').count('id as count');
@@ -40,7 +26,33 @@ export const getPaginatedMarriageCertificates = async (page, limit, search) => {
     };
 };
 
+export const searchMarriageCertQuery = async (search) =>{
+    let query = db('marriage_certificates').select('id', 'one_first', 'one_middle', 'one_last', 'one_last_wife', 'one_first_wife','RegistryNumber', 'scannedFile');
+
+    const searchTerms = search.split(' ').map(term => term.toLowerCase());
+
+        query = query.where(builder => {
+            searchTerms.forEach(term => {
+                builder.orWhere(function() {
+                    this.whereRaw('LOWER(one_last) LIKE ?', [`%${term.toLowerCase()}%`])
+                        .orWhereRaw('LOWER(one_first) LIKE ?', [`%${term.toLowerCase()}%`])
+                        .orWhereRaw('LOWER(one_last_wife) LIKE ?', [`%${term.toLowerCase()}%`])
+                        .orWhereRaw('LOWER(one_first_wife) LIKE ?', [`%${term.toLowerCase()}%`])
+                        .orWhereRaw('LOWER("RegistryNumber") LIKE ?', [`%${term.toLowerCase()}%`]);
+                });
+            });
+        });
+
+    const result = await query;
+
+    return result
+}
+
 // get single certificate
 export const getSingleMarriageCertificate = (id) => {
     return db('marriage_certificates').where({ id }).first();
+}
+
+export const deleteSingleMarriageCert = (id) =>{
+    return db('marriage_certificates').delete('*').where({id})
 }

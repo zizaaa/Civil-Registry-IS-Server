@@ -1,4 +1,4 @@
-import { getPaginatedBirthCertificates, getRegistryNumber, getSingleBirthCertificate, insertData, searchBirthCertQuery } from "../models/birthCertModels.js";
+import { deleteSingleBirthCert, getPaginatedBirthCertificates, getRegistryNumber, getSingleBirthCertificate, insertData, searchBirthCertQuery } from "../models/birthCertModels.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
@@ -45,11 +45,8 @@ export const handleGetPaginatedBirthCertificates = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;  // Get the page from query params
         const limit = parseInt(req.query.limit) || 10;  // Set a default limit if not provided
-        
-        // Get search parameters from the query
-        const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
 
-        const result = await getPaginatedBirthCertificates(page, limit, searchTerm);
+        const result = await getPaginatedBirthCertificates(page, limit);
 
         return res.status(200).json(result);
     } catch (error) {
@@ -65,6 +62,18 @@ export const searchBirthCertificate = async(req,res) => {
         const result = await searchBirthCertQuery(searchTerm);
 
         return res.status(200).json(result)
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
+    }
+}
+
+export const handleDeleteSingleBirtCert = async(req,res)=>{
+    try {
+        const { id } = req.body;
+
+        await deleteSingleBirthCert(id);
+
+        return res.status(200).json({message:"Certificate successfully deleted"})
     } catch (error) {
         return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
     }

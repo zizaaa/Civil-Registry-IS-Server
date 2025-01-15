@@ -1,7 +1,7 @@
 import { Router } from "express";
 import isAuthenticated from "../auth/isAuthenticated.js";
 import { upload } from "../config/multer.js";
-import { handleGetFormNumber, handleGetPaginatedMarriageCertificates, handleGetSingleCertificate, registerMarriageCert } from "../controllers/marriageCertController.js";
+import { handleDeleteSingleMarriageCert, handleGetFormNumber, handleGetPaginatedMarriageCertificates, handleGetSingleCertificate, registerMarriageCert, searchMarriageCertificate } from "../controllers/marriageCertController.js";
 
 const router = Router();
 
@@ -21,6 +21,10 @@ router.post('/register', isAuthenticated, upload.fields([
 router.get('/form-number', isAuthenticated, handleGetFormNumber);
 
 router.get('/get-all', isAuthenticated, handleGetPaginatedMarriageCertificates);
+
+router.get('/search', isAuthenticated, searchMarriageCertificate);
+
+router.post('/delete', isAuthenticated, handleDeleteSingleMarriageCert);
 
 router.get('/get-single', isAuthenticated, handleGetSingleCertificate);
 

@@ -17,7 +17,18 @@ export const getPaginatedFoundlingCertificates = async (page, limit, search) => 
     const offset = (page - 1) * limit;
     let query = db('foundlings_certificate').select('*').limit(limit).offset(offset);
 
-    if (search) {
+    const result = await query;
+
+    const totalCount = await db('foundlings_certificate').count('id as count');
+    return {
+        data: result,
+        total: parseInt(totalCount[0].count, 10),
+    };
+};
+
+export const searchFoundlingQuery = async (search) =>{
+    let query = db('foundlings_certificate').select('id', 'registryNumber', 'one_name', 'scannedFile');
+
         // Split search by spaces and convert each term to lowercase
         const searchTerms = search.split(' ').map(term => term.trim().toLowerCase());
 
@@ -30,18 +41,17 @@ export const getPaginatedFoundlingCertificates = async (page, limit, search) => 
                 });
             });
         });
-    }
 
     const result = await query;
 
-    const totalCount = await db('foundlings_certificate').count('id as count');
-    return {
-        data: result,
-        total: parseInt(totalCount[0].count, 10),
-    };
-};
+    return result
+}
 
 // get single certificate
 export const getSingleFoundlingCertificate = (id) => {
     return db('foundlings_certificate').where({ id }).first();
+}
+
+export const deleteSingleFoundlingCert = (id) =>{
+    return db('foundlings_certificate').delete('*').where({id})
 }

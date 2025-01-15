@@ -1,4 +1,4 @@
-import { getFormNumber, getPaginatedMarriageCertificates, getSingleMarriageCertificate, insertData } from "../models/marriageCertModel.js";
+import { deleteSingleMarriageCert, getFormNumber, getPaginatedMarriageCertificates, getSingleMarriageCertificate, insertData, searchMarriageCertQuery } from "../models/marriageCertModel.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
@@ -52,16 +52,26 @@ export const handleGetPaginatedMarriageCertificates = async (req, res) => {
         const page = parseInt(req.query.page) || 1;  // Get the page from query params
         const limit = parseInt(req.query.limit) || 10;  // Set a default limit if not provided
         
-        // Get search parameters from the query
-        const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
-
-        const result = await getPaginatedMarriageCertificates(page, limit, searchTerm);
+        const result = await getPaginatedMarriageCertificates(page, limit);
 
         return res.status(200).json(result);
     } catch (error) {
         return res.status(500).json({ message: 'Error fetching paginated data.' });
     }
 };
+
+export const searchMarriageCertificate = async(req,res) => {
+    try {
+        // Get search parameters from the query
+        const { searchTerm } = req.query;  // Assuming a single search string; adjust as needed
+        console.log(searchTerm)
+        const result = await searchMarriageCertQuery(searchTerm);
+
+        return res.status(200).json(result)
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching marriage certidficate data.' });
+    }
+}
 
 export const handleGetSingleCertificate = async (req,res) => {
     const { id } = req.query;
@@ -79,5 +89,17 @@ export const handleGetSingleCertificate = async (req,res) => {
         return res.status(201).json(response);
     } catch (error) {
         return res.status(500).json({ message: 'Error finding certificate.' });
+    }
+}
+
+export const handleDeleteSingleMarriageCert = async(req,res)=>{
+    try {
+        const { id } = req.body;
+
+        await deleteSingleMarriageCert(id);
+
+        return res.status(200).json({message:"Certificate successfully deleted"})
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
     }
 }

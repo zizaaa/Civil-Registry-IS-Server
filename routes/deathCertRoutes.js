@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { handleGetFormNumber, handleGetPaginatedDeathCertificates, handleGetSingleCertificate, registerDeathCert } from "../controllers/deathCertController.js";
+import { handleDeleteSingleDeathCert, handleGetFormNumber, handleGetPaginatedDeathCertificates, handleGetSingleCertificate, registerDeathCert, searchDeathCertificate } from "../controllers/deathCertController.js";
 
 import isAuthenticated from "../auth/isAuthenticated.js";
 import { upload } from "../config/multer.js";
@@ -18,6 +18,10 @@ router.post('/register', isAuthenticated, upload.fields([
 router.get('/form-number', isAuthenticated, handleGetFormNumber);
 
 router.get('/get-all', isAuthenticated, handleGetPaginatedDeathCertificates);
+
+router.get('/search', isAuthenticated, searchDeathCertificate);
+
+router.post('/delete', isAuthenticated, handleDeleteSingleDeathCert);
 
 router.get('/get-single', isAuthenticated, handleGetSingleCertificate);
 
