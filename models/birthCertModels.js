@@ -1,9 +1,15 @@
 import db from '../config/db.js';
 
 // register birth certificate
-export const insertData = (data) =>{
-    return db('birthcertificate').insert(data).returning('*');
-}
+export const insertData = async (data) => {
+    try {
+        return await db('birthcertificate').insert(data).returning('*');
+    } catch (error) {
+        console.error("Insert Data Error:", error);
+        throw new Error("Failed to insert data into the database.");
+    }
+};
+
 
 //get registry number based on ID
 export const getRegistryNumber = async () => {
