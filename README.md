@@ -54,6 +54,7 @@ Make sure you have the following installed:
    NODE_ENV = 'development'
    CLIENT_URL = http://localhost:5173
    SERVER_URL = http://localhost:8000
+   CAPTCHA_KEY = "key"
    ```
 3. Run the migrations:
   To create the necessary tables in the database, execute the following command:

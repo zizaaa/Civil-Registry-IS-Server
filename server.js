@@ -12,6 +12,7 @@ import marriageCertRoutes from "./routes/marriageCertRoutes.js";
 import foundlingCertRoutes from "./routes/foundlingCertRoutes.js";
 import recentActRoutes from "./routes/recentActRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
+import captcha from './auth/captcha.js'
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use('/api/cris/marriage-certificate', marriageCertRoutes);
 app.use('/api/cris/foundling-certificate', foundlingCertRoutes);
 app.use('/api/cris/recent-activity', recentActRoutes);
 app.use('/api/cris/reports', reportRoutes);
+app.use(captcha);
 
 // Start the server
 app.listen(8000, () => {
