@@ -1,4 +1,4 @@
-import { deleteSingleBirthCert, getPaginatedBirthCertificates, getRegistryNumber, getSingleBirthCertificate, insertData, searchBirthCertQuery } from "../models/birthCertModels.js";
+import { deleteSingleBirthCert, getPaginatedBirthCertificates, getRegistryNumber, getSingleBirthCertificate, insertData, searchBirthCertQuery, updateBirthCert } from "../models/birthCertModels.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
@@ -95,5 +95,23 @@ export const handleGetSingleCertificate = async (req,res) => {
         return res.status(201).json(response);
     } catch (error) {
         return res.status(500).json({ message: 'Error finding certificate.' });
+    }
+}
+
+export const handleUpdateBirthCert = async(req,res) =>{
+    const { id } = req.params;
+    const { formData } = req.body;
+
+    try {
+        if(!id){
+            return res.status(400).json({ error: "ID is required" });
+        }
+        console.log(id)
+        console.log(formData)
+        await updateBirthCert(id, formData);
+
+        return res.status(200).json({message:'Birth certificate'});
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating data.' });
     }
 }
