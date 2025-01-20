@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { handleDeleteSingleBirtCert, handleGetPaginatedBirthCertificates, handleGetRegistryNumber, handleGetSingleCertificate, handleUpdateBirthCert, registerBirthCert, searchBirthCertificate } from "../controllers/birthCertControllers.js";
+import { handleDeleteSingleBirtCert, handleGetPaginatedBirthCertificates, handleGetRegistryNumber, handleGetSingleCertificate, handleUpdateBirthCert, handleUpdateBirthCertFile, registerBirthCert, searchBirthCertificate } from "../controllers/birthCertControllers.js";
 import isAuthenticated from "../auth/isAuthenticated.js";
 import { upload } from "../config/multer.js";
 
@@ -23,6 +23,8 @@ router.post('/delete', isAuthenticated, handleDeleteSingleBirtCert);
 
 router.get('/get-single', isAuthenticated, handleGetSingleCertificate);
 
-router.post('/update/:id', isAuthenticated, handleUpdateBirthCert)
+router.post('/update/:id', isAuthenticated, handleUpdateBirthCert);
+
+router.post('/update/file/:id', isAuthenticated, upload.single('scannedFile'),handleUpdateBirthCertFile)
 
 export default router;

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import isAuthenticated from "../auth/isAuthenticated.js";
 import { upload } from "../config/multer.js";
-import { handleDeleteSingleFoundlingCert, handleFormRegistryNumber, handleGetPaginatedFoundlingCertificates, handleGetSingleCertificate, registerFoundlingCert, searchFoundlings } from "../controllers/foundlingCertController.js";
+import { handleDeleteSingleFoundlingCert, handleFormRegistryNumber, handleGetPaginatedFoundlingCertificates, handleGetSingleCertificate, handleUpdateFoundlingCert, handleUpdateFoundlingCertFile, registerFoundlingCert, searchFoundlings } from "../controllers/foundlingCertController.js";
 
 const router = Router();
 
@@ -21,5 +21,9 @@ router.post('/delete', isAuthenticated, handleDeleteSingleFoundlingCert);
 router.get('/get-all', isAuthenticated, handleGetPaginatedFoundlingCertificates);
 
 router.get('/get-single', isAuthenticated, handleGetSingleCertificate);
+
+router.post('/update/:id', isAuthenticated, handleUpdateFoundlingCert);
+
+router.post('/update/file/:id', isAuthenticated, upload.single('scannedFile'),handleUpdateFoundlingCertFile)
 
 export default router;

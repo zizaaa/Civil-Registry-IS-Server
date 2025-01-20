@@ -115,3 +115,33 @@ export const handleUpdateBirthCert = async(req,res) =>{
         return res.status(500).json({ message: 'Error updating data.' });
     }
 }
+
+export const handleUpdateBirthCertFile = async(req,res) =>{
+    const { id } = req.params;
+
+    try {
+        if(!id){
+            return res.status(400).json({ error: "ID is required" });
+        }
+        // Access file and other fields
+        const scannedFile = req.file; // The uploaded file
+        const fields = req.body; // The other fields in FormData
+
+        let formData;
+
+        if(scannedFile && scannedFile.path){
+            formData = {
+                ...fields,
+                scannedFile:scannedFile.path
+            }
+        }else{
+            formData = {...fields};
+        }
+        
+        await updateBirthCert(id, formData);
+
+        return res.status(200).json({message:'Birth certificate'});
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating data.' });
+    }
+}

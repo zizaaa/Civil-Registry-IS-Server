@@ -55,3 +55,24 @@ export const getSingleFoundlingCertificate = (id) => {
 export const deleteSingleFoundlingCert = (id) =>{
     return db('foundlings_certificate').delete('*').where({id})
 }
+
+export const updateFoundlingCert = async (birthCertId, updates) => {
+    try {
+        // Filter out null, undefined, and empty string values
+        const filteredUpdates = Object.fromEntries(
+            Object.entries(updates).filter(([_, value]) => value !== undefined && value !== null && value !== "")
+        );
+
+        if (Object.keys(filteredUpdates).length === 0) {
+            throw new Error("No fields provided for update");
+        }
+
+        await db('foundlings_certificate')
+            .where({ id: birthCertId })
+            .update(filteredUpdates);
+
+        return { message: "Birth certificate updated successfully" };
+    } catch (error) {
+        throw new Error('Unable to update birth certificate');
+    }
+};
