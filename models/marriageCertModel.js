@@ -56,3 +56,24 @@ export const getSingleMarriageCertificate = (id) => {
 export const deleteSingleMarriageCert = (id) =>{
     return db('marriage_certificates').delete('*').where({id})
 }
+
+export const updateMarriageCert = async (marriage, updates) => {
+    try {
+        // Filter out null, undefined, and empty string values
+        const filteredUpdates = Object.fromEntries(
+            Object.entries(updates).filter(([_, value]) => value !== undefined && value !== null && value !== "")
+        );
+
+        if (Object.keys(filteredUpdates).length === 0) {
+            throw new Error("No fields provided for update");
+        }
+
+        await db('marriage_certificates')
+            .where({ id: marriage })
+            .update(filteredUpdates);
+
+        return { message: "marriage certificate updated successfully" };
+    } catch (error) {
+        throw new Error('Unable to update marriage certificate');
+    }
+};

@@ -1,4 +1,4 @@
-import { deleteSingleMarriageCert, getFormNumber, getPaginatedMarriageCertificates, getSingleMarriageCertificate, insertData, searchMarriageCertQuery } from "../models/marriageCertModel.js";
+import { deleteSingleMarriageCert, getFormNumber, getPaginatedMarriageCertificates, getSingleMarriageCertificate, insertData, searchMarriageCertQuery, updateMarriageCert } from "../models/marriageCertModel.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
@@ -101,5 +101,53 @@ export const handleDeleteSingleMarriageCert = async(req,res)=>{
         return res.status(200).json({message:"Certificate successfully deleted"})
     } catch (error) {
         return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
+    }
+}
+
+export const handleUpdateMarriageCert = async(req,res) =>{
+    const { id } = req.params;
+    const { formData } = req.body;
+
+    try {
+        if(!id){
+            return res.status(400).json({ error: "ID is required" });
+        }
+        console.log(id)
+        console.log(formData)
+        await updateMarriageCert(id, formData);
+
+        return res.status(200).json({message:'mnarriage certificate'});
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating data.' });
+    }
+}
+
+export const handleUpdateMarriageCertFile = async(req,res) =>{
+    const { id } = req.params;
+
+    try {
+        if(!id){
+            return res.status(400).json({ error: "ID is required" });
+        }
+        // Access file and other fields
+        const scannedFile = req.file; // The uploaded file
+        const fields = req.body; // The other fields in FormData
+
+        let formData;
+
+        if(scannedFile && scannedFile.path){
+            formData = {
+                ...fields,
+                scannedFile:scannedFile.path
+            }
+        }else{
+            formData = {...fields};
+        }
+        
+        await updateMarriageCert(id, formData);
+
+        return res.status(200).json({message:'Birth certificate'});
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating data.' });
     }
 }

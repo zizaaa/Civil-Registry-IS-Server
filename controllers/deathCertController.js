@@ -1,4 +1,4 @@
-import { deleteSingleDeathCert, getFormNumber, getPaginatedDeathCertificates, getSingleDeathCertificate, insertData, searchDeathCertQuery } from "../models/deathCertModels.js";
+import { deleteSingleDeathCert, getFormNumber, getPaginatedDeathCertificates, getSingleDeathCertificate, insertData, searchDeathCertQuery, updateDeathCert } from "../models/deathCertModels.js";
 
 // Helper function to get file path
 const getFilePath = (files, key) => files[key] ? files[key][0].path : null;
@@ -97,5 +97,52 @@ export const handleDeleteSingleDeathCert = async(req,res)=>{
         return res.status(200).json({message:"Certificate successfully deleted"})
     } catch (error) {
         return res.status(500).json({ message: 'Error fetching birth certidficate data.' });
+    }
+}
+
+export const handleUpdateDeathCert = async(req,res) =>{
+    const { id } = req.params;
+    const { formData } = req.body;
+
+    try {
+        if(!id){
+            return res.status(400).json({ error: "ID is required" });
+        }
+        console.log(formData)
+        await updateDeathCert(id, formData);
+
+        return res.status(200).json({message:'Death certificate'});
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating data.' });
+    }
+}
+
+export const handleUpdateDeathCertFile = async(req,res) =>{
+    const { id } = req.params;
+
+    try {
+        if(!id){
+            return res.status(400).json({ error: "ID is required" });
+        }
+        // Access file and other fields
+        const scannedFile = req.file; // The uploaded file
+        const fields = req.body; // The other fields in FormData
+
+        let formData;
+
+        if(scannedFile && scannedFile.path){
+            formData = {
+                ...fields,
+                scannedFile:scannedFile.path
+            }
+        }else{
+            formData = {...fields};
+        }
+        
+        await updateDeathCert(id, formData);
+
+        return res.status(200).json({message:'Death certificate'});
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating data.' });
     }
 }

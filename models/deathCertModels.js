@@ -54,3 +54,24 @@ export const getSingleDeathCertificate = (id) => {
 export const deleteSingleDeathCert = (id) =>{
     return db('death_certificates').delete('*').where({id})
 }
+
+export const updateDeathCert = async (deathCertId, updates) => {
+    try {
+        // Filter out null, undefined, and empty string values
+        const filteredUpdates = Object.fromEntries(
+            Object.entries(updates).filter(([_, value]) => value !== undefined && value !== null && value !== "")
+        );
+
+        if (Object.keys(filteredUpdates).length === 0) {
+            throw new Error("No fields provided for update");
+        }
+
+        await db('death_certificates')
+            .where({ id: deathCertId })
+            .update(filteredUpdates);
+
+        return { message: "Death certificate updated successfully" };
+    } catch (error) {
+        throw new Error('Unable to update birth certificate');
+    }
+};
