@@ -1,7 +1,22 @@
 import db from '../config/db.js'
 
 // register death cert
-export const insertData = ( data ) =>{
+export const insertData = async( data ) =>{
+    if(!data.registryNumber){
+        return {
+            error:true,
+            message:'No Registry Number provided'
+        };
+    }
+
+    const existingCert = await db('death_certificates').where({ registryNumber: data.registryNumber }).first();
+
+    if(existingCert){
+        return {
+            error:true,
+            message:'Death certificate already exists.'
+        };;
+    }
     return db('death_certificates').insert(data).returning('*');
 }
 

@@ -1,7 +1,22 @@
 import db from '../config/db.js'
 
 // register marriage cert
-export const insertData = ( data ) =>{
+export const insertData = async( data ) =>{
+    if(!data.RegistryNumber){
+        return {
+            error:true,
+            message:'No Registry Number provided'
+        };
+    }
+
+    const existingCert = await db('marriage_certificates').where({ RegistryNumber: data.RegistryNumber }).first();
+
+    if(existingCert){
+        return {
+            error:true,
+            message:'Marriage certificate already exists.'
+        };;
+    }
     return db('marriage_certificates').insert(data).returning('*');
 }
 

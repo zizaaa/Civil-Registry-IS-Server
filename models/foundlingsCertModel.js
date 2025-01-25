@@ -1,7 +1,23 @@
 import db from '../config/db.js'
 
 // register foundlings cert
-export const insertData = ( data ) =>{
+export const insertData = async( data ) =>{
+    if(!data.registryNumber){
+        return {
+            error:true,
+            message:'No Registry Number provided'
+        };
+    }
+
+    const existingCert = await db('foundlings_certificate').where({ registryNumber: data.registryNumber }).first();
+
+    if(existingCert){
+        return {
+            error:true,
+            message:'Foundling certificate already exists.'
+        };;
+    }
+
     return db('foundlings_certificate').insert(data).returning('*');
 }
 

@@ -3,6 +3,23 @@ import db from '../config/db.js';
 // register birth certificate
 export const insertData = async (data) => {
     try {
+        
+        if(!data.registryNumber){
+            return {
+                error:true,
+                message:'No Registry Number provided'
+            };
+        }
+
+        const existingCert = await db('birthcertificate').where({ registryNumber: data.registryNumber }).first();
+
+        if(existingCert){
+            return {
+                error:true,
+                message:'Birth certificate already exists.'
+            };;
+        }
+
         return await db('birthcertificate').insert(data).returning('*');
     } catch (error) {
         console.error("Insert Data Error:", error);

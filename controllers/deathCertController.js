@@ -24,7 +24,11 @@ export const registerDeathCert = async (req, res) => {
             scannedFile: filePaths['scannedFile']
         };
 
-        await insertData(certData);
+        const result = await insertData(certData);
+        
+        if(result.error){
+            return res.status(400).json({ error: result.message });
+        }
         return res.status(201).json({ message: "Successfully registered!" });
     } catch (error) {
         return res.status(500).json({ error: 'Error registering death certificate.' });

@@ -22,10 +22,15 @@ export const registerBirthCert = async (req, res) => {
             // twentyTwo_Signature: filePaths['twentyTwo_Signature'],
             scannedFile: filePaths['scannedFile']
         };
-        console.log(certData)
-        await insertData(certData);
+        const result = await insertData(certData);
+
+            if(result.error){
+                return res.status(400).json({ error: result.message });
+            }
+
         return res.status(201).json({ message: "Successfully registered!" });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ error: 'Error registering birth certificate.' });
     }
 };
