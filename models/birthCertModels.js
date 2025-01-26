@@ -38,7 +38,7 @@ export const getRegistryNumber = async () => {
 
 export const getPaginatedBirthCertificates = async (page, limit) => {
     const offset = (page - 1) * limit;
-    let query = db('birthcertificate').select('*').limit(limit).offset(offset);
+    let query = db('birthcertificate').select('*').limit(limit).offset(offset).where('archived', false).andWhere('deleted', false);;
     
     const result = await query;
 
@@ -49,25 +49,28 @@ export const getPaginatedBirthCertificates = async (page, limit) => {
     };
 };
 
-export const searchBirthCertQuery = async (search) =>{
-    let query = db('birthcertificate').select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber', 'scannedFile');
+export const searchBirthCertQuery = async (search) => {
+    if (!search) return []; // Handle empty search
 
     const searchTerms = search.split(' ').map(term => term.toLowerCase());
-        
-        query = query.where(builder => {
-            searchTerms.forEach(term => {
-                builder.orWhere(function() {
-                    this.whereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
-                        .orWhereRaw('LOWER(one_first) LIKE ?', `%${term}%`)
-                        .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`); // Use double quotes for case-sensitive column
-                });
-            });
+
+    let query = db('birthcertificate')
+        .select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber', 'scannedFile')
+        .where('archived', false)
+        .andWhere('deleted', false);
+
+    query = query.andWhere(builder => {
+        searchTerms.forEach(term => {
+            builder.orWhereRaw('LOWER(one_last) LIKE ?', `%${term}%`)
+                .orWhereRaw('LOWER(one_first) LIKE ?', `%${term}%`)
+                .orWhereRaw('LOWER("registryNumber") LIKE ?', `%${term}%`);
         });
+    });
 
     const result = await query;
+    return result;
+};
 
-    return result
-}
 
 // get single certificate
 export const getSingleBirthCertificate = (id) => {

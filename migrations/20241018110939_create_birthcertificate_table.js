@@ -97,6 +97,9 @@ export function up (knex) {
         table.string('seventeen');
         table.string('nineteen');
         table.string('scannedFile');
+
+        table.boolean('archived').defaultTo(false);
+        table.boolean('deleted').defaultTo(false);
     })
 };
 

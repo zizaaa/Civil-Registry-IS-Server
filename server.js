@@ -12,6 +12,7 @@ import marriageCertRoutes from "./routes/marriageCertRoutes.js";
 import foundlingCertRoutes from "./routes/foundlingCertRoutes.js";
 import recentActRoutes from "./routes/recentActRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
+import archiveRoutes from "./routes/archiveRoutes.js"
 import captcha from './auth/captcha.js'
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use(authChecker);
 
 // Define your routes
 app.use('/api/cris', userRoutes);
+app.use('/api/cris', archiveRoutes);
 app.use('/api/cris/birth-certificate', birthCertRoutes);
 app.use('/api/cris/death-certificate', deathCertRoutes);
 app.use('/api/cris/marriage-certificate', marriageCertRoutes);

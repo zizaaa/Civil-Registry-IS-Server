@@ -91,6 +91,9 @@ export function up(knex) {
 
         // file
         table.string('scannedFile');
+
+        table.boolean('archived').defaultTo(false);
+        table.boolean('deleted').defaultTo(false);
     });
 };
 

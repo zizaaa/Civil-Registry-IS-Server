@@ -30,7 +30,7 @@ export const getFormNumber = async () => {
 
 export const getPaginatedDeathCertificates = async (page, limit) => {
     const offset = (page - 1) * limit;
-    let query = db('death_certificates').select('*').limit(limit).offset(offset);
+    let query = db('death_certificates').select('*').limit(limit).offset(offset).where('archived', false).andWhere('deleted', false);
 
     const result = await query;
 
@@ -42,7 +42,7 @@ export const getPaginatedDeathCertificates = async (page, limit) => {
 };
 
 export const searchDeathCertQuery = async (search) =>{
-    let query = db('death_certificates').select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber', 'scannedFile')
+    let query = db('death_certificates').select('id', 'one_first', 'one_middle', 'one_last', 'registryNumber', 'scannedFile').where('archived', false).andWhere('deleted', false);
 
     const searchTerms = search.split(' ').map(term => term.toLowerCase());
         

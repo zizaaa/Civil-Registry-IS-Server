@@ -30,7 +30,7 @@ export const getFormNumber = async () => {
 
 export const getPaginatedMarriageCertificates = async (page, limit, search) => {
     const offset = (page - 1) * limit;
-    let query = db('marriage_certificates').select('*').limit(limit).offset(offset);
+    let query = db('marriage_certificates').select('*').limit(limit).offset(offset).where('archived', false).andWhere('deleted', false);
 
     const result = await query;
 
@@ -42,7 +42,7 @@ export const getPaginatedMarriageCertificates = async (page, limit, search) => {
 };
 
 export const searchMarriageCertQuery = async (search) =>{
-    let query = db('marriage_certificates').select('id', 'one_first', 'one_middle', 'one_last', 'one_last_wife', 'one_first_wife','RegistryNumber', 'scannedFile');
+    let query = db('marriage_certificates').select('id', 'one_first', 'one_middle', 'one_last', 'one_last_wife', 'one_first_wife','RegistryNumber', 'scannedFile').where('archived', false).andWhere('deleted', false);
 
     const searchTerms = search.split(' ').map(term => term.toLowerCase());
 

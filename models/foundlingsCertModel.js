@@ -31,7 +31,7 @@ export const getFormNumber = async () => {
 
 export const getPaginatedFoundlingCertificates = async (page, limit, search) => {
     const offset = (page - 1) * limit;
-    let query = db('foundlings_certificate').select('*').limit(limit).offset(offset);
+    let query = db('foundlings_certificate').select('*').limit(limit).offset(offset).where('archived', false).andWhere('deleted', false);
 
     const result = await query;
 
@@ -43,7 +43,7 @@ export const getPaginatedFoundlingCertificates = async (page, limit, search) => 
 };
 
 export const searchFoundlingQuery = async (search) =>{
-    let query = db('foundlings_certificate').select('id', 'registryNumber', 'one_name', 'scannedFile');
+    let query = db('foundlings_certificate').select('id', 'registryNumber', 'one_name', 'scannedFile').where('archived', false).andWhere('deleted', false);
 
         // Split search by spaces and convert each term to lowercase
         const searchTerms = search.split(' ').map(term => term.trim().toLowerCase());
